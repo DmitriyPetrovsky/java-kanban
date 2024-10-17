@@ -1,17 +1,17 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Manager {
-    private static HashMap<Integer, Task> allTasks = new HashMap<>();
+    private final static HashMap<Integer, Task> allTasks = new HashMap<>();
     private static int taskCounter = 0;
 
     public static int getTaskCounter() {
         return taskCounter;
     }
 
-    public static void increaseTascCounter() {
+    public static void increaseTaskCounter() {
         taskCounter++;
     }
 
@@ -21,7 +21,7 @@ public class Manager {
         } else if (!allTasks.containsKey(task.getId()) && !(task instanceof Subtask)) {
             allTasks.put(task.getId(), task);
         } else if (task instanceof Subtask && getByKey(((Subtask) task).getEpicId()) instanceof EpicTask) {
-            ((EpicTask) getByKey(((Subtask) task).getEpicId()))
+            (Objects.requireNonNull(getByKey(((Subtask) task).getEpicId())))
                     .getSubtasks()
                     .add(task.getId());
             allTasks.put(task.getId(), task);
@@ -37,11 +37,7 @@ public class Manager {
     }
 
     public static Task getByKey(int id) {
-        if (allTasks.containsKey(id)) {
-            return allTasks.get(id);
-        } else {
-            return null;
-        }
+        return allTasks.getOrDefault(id, null);
     }
 
     public static void removeTaskById(int id) {
@@ -82,8 +78,8 @@ public class Manager {
         for (Map.Entry<Integer, Task> entry : allTasks.entrySet()) {
             tempTask = entry.getValue();
             if (tempTask instanceof EpicTask) {
-                List<Integer> tempList = new ArrayList<>();
-                tempList = ((EpicTask) tempTask).getSubtasks();
+                List<Integer> tempList;
+                tempList = tempTask.getSubtasks();
 
                 result = result + "Задача " + counter +
                         ": Type = 'EpicTask', " +
@@ -105,7 +101,7 @@ public class Manager {
                     counter++;
 
                 }
-            } else if (!(tempTask instanceof Subtask) && tempTask instanceof Task) {
+            } else if (!(tempTask instanceof Subtask)) {
                 result = result + "Задача " + counter +
                         ": Type = 'Task', " +
                         "ID = '" + tempTask.getId() +
@@ -132,7 +128,6 @@ public class Manager {
 
     public static void checkStatus() {
         Task tempTask;
-        Task tempSubtask;
         for (Map.Entry<Integer, Task> entry : allTasks.entrySet()) {
             tempTask = entry.getValue();
             if (tempTask instanceof EpicTask) {
@@ -140,7 +135,7 @@ public class Manager {
                 int inProgressCount = 0;
                 int doneCount = 0;
                 HashMap<Integer, Task> subTasks = getSubtasks(tempTask.getId());
-                if (subTasks.size() > 0) {
+                if (!subTasks.isEmpty()) {
                     for (Map.Entry<Integer, Task> entrySub : subTasks.entrySet()) {
                         if (entrySub.getValue().getStatus() == Status.NEW) newCount++;
                         if (entrySub.getValue().getStatus() == Status.IN_PROGRESS) inProgressCount++;

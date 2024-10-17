@@ -3,7 +3,7 @@ import java.util.List;
 public class Task {
     private String taskName;
     private String info;
-    private int id;
+    private final int id;
     private Status status;
 
     public Task(String taskName, String info) {
@@ -11,7 +11,7 @@ public class Task {
         this.info = info;
         this.status = Status.NEW;
         this.id = 1000 + Manager.getTaskCounter();
-        Manager.increaseTascCounter();
+        Manager.increaseTaskCounter();
     }
 
     public String getTaskName() {
