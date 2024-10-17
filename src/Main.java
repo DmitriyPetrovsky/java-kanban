@@ -75,17 +75,15 @@ public class Main {
         Manager.printAll();
 
 
-
-
     }
 
 
     public static void fillManagerOne() {
         Manager.addTask(new Task("Задача 1", "Инфо зад.1"));
         Manager.addTask(new EpicTask("Задача эпик 1", "Эпик с подзадачами"));
-        Manager.addTask(new Subtask("Подзадача 1", "Инфо подзадачи 1",1001));
+        Manager.addTask(new Subtask("Подзадача 1", "Инфо подзадачи 1", 1001));
         Manager.addTask(new Task("Задача 2", "Инфо зад.2"));
-        Manager.addTask(new Subtask("Подзадача 2", "Инфо подзадачи 2",1001));
+        Manager.addTask(new Subtask("Подзадача 2", "Инфо подзадачи 2", 1001));
         Manager.addTask(new EpicTask("Задача эпик 2", "Эпик без подзадач"));
 
 
@@ -94,18 +92,18 @@ public class Main {
     public static void fillManagerTwo() {
         Manager.addTask(new Task("Задача 1", "Инфо зад.1"));
         Manager.addTask(new EpicTask("Задача эпик 1", "Эпик с подзадачами"));
-        Manager.addTask(new Subtask("Подзадача 1", "Инфо подзадачи 1",1007));
+        Manager.addTask(new Subtask("Подзадача 1", "Инфо подзадачи 1", 1007));
         Manager.addTask(new Task("Задача 2", "Инфо зад.2"));
-        Manager.addTask(new Subtask("Подзадача 2", "Инфо подзадачи 2",1007));
+        Manager.addTask(new Subtask("Подзадача 2", "Инфо подзадачи 2", 1007));
         Manager.addTask(new EpicTask("Задача эпик 2", "Эпик без подзадач"));
     }
 
     public static void fillManagerThree() {
         Manager.addTask(new Task("Задача 1", "Инфо зад.1"));
         Manager.addTask(new EpicTask("Задача эпик 1", "Эпик с подзадачами"));
-        Manager.addTask(new Subtask("Подзадача 1", "Инфо подзадачи 1",1013));
+        Manager.addTask(new Subtask("Подзадача 1", "Инфо подзадачи 1", 1013));
         Manager.addTask(new Task("Задача 2", "Инфо зад.2"));
-        Manager.addTask(new Subtask("Подзадача 2", "Инфо подзадачи 2",1013));
+        Manager.addTask(new Subtask("Подзадача 2", "Инфо подзадачи 2", 1013));
         Manager.addTask(new EpicTask("Задача эпик 2", "Эпик без подзадач"));
     }
 }

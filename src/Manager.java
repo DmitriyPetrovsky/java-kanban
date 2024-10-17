@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 public class Manager {
-    private static HashMap<Integer, Task> allTasks  = new HashMap<>();
+    private static HashMap<Integer, Task> allTasks = new HashMap<>();
     private static int taskCounter = 0;
 
     public static int getTaskCounter() {
         return taskCounter;
     }
 
-    public static void increaseTascCounter(){
+    public static void increaseTascCounter() {
         taskCounter++;
     }
 
@@ -43,7 +43,8 @@ public class Manager {
             return null;
         }
     }
-    public static void removeTaskById(int id){
+
+    public static void removeTaskById(int id) {
         if (allTasks.containsKey(id)) {
             Task tempTask = allTasks.get(id);
             if (tempTask instanceof Subtask) {
@@ -61,15 +62,15 @@ public class Manager {
         }
     }
 
-    public static HashMap<Integer, Task> getSubtasks(int id){
+    public static HashMap<Integer, Task> getSubtasks(int id) {
         HashMap<Integer, Task> result = new HashMap<>();
-            if (allTasks.get(id) instanceof EpicTask) {
-                Task tempEpicTask = allTasks.get(id);
-                List<Integer> tempList = tempEpicTask.getSubtasks();
-                for (Integer ids : tempList) {
-                    result.put(ids, allTasks.get(ids));
-                }
+        if (allTasks.get(id) instanceof EpicTask) {
+            Task tempEpicTask = allTasks.get(id);
+            List<Integer> tempList = tempEpicTask.getSubtasks();
+            for (Integer ids : tempList) {
+                result.put(ids, allTasks.get(ids));
             }
+        }
         return result;
     }
 
@@ -128,6 +129,7 @@ public class Manager {
             checkStatus();
         }
     }
+
     public static void checkStatus() {
         Task tempTask;
         Task tempSubtask;
