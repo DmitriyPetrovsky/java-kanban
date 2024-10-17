@@ -12,8 +12,4 @@ public class EpicTask extends Task {
         return subtasks;
     }
 
-    public void setSubtasks(List<Integer> subtasks) {
-        this.subtasks = subtasks;
-    }
-
 }
