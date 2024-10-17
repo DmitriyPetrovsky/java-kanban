@@ -10,23 +10,8 @@ public class Task {
         this.taskName = taskName;
         this.info = info;
         this.status = Status.NEW;
-        this.id = this.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Task task = (Task) o;
-        return id == task.id && taskName.equals(task.taskName) && info.equals(task.info) && status == task.status;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = taskName.hashCode();
-        result = 31 * result + info.hashCode();
-        return Math.abs(result);
+        this.id = 1000 + Manager.getTaskCounter();
+        Manager.increaseTascCounter();
     }
 
     public String getTaskName() {
@@ -49,23 +34,16 @@ public class Task {
         return null;
     }
 
-    @Override
-    public String toString() {
-        return  "taskName='" + taskName + '\'' +
-                ", info='" + info + '\'' +
-                ", id=" + id +
-                ", status=" + status;
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 
-    public String getInstance(Task task) {
-        if (task instanceof EpicTask) {
-            return "Эпик";
-        } else if (task instanceof Subtask) {
-            return "Подзадача";
-        } else if (task instanceof Task) {
-            return "Задача";
-        } else {
-            return "";
-        }
+    public void setInfo(String info) {
+        this.info = info;
     }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
 }

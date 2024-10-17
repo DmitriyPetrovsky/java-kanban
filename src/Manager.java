@@ -5,24 +5,26 @@ import java.util.Map;
 
 public class Manager {
     private static HashMap<Integer, Task> allTasks  = new HashMap<>();
+    private static int taskCounter = 0;
 
+    public static int getTaskCounter() {
+        return taskCounter;
+    }
+
+    public static void increaseTascCounter(){
+        taskCounter++;
+    }
 
     public static void addTask(Task task) {
-        if (!allTasks.containsKey(task.getId())) {
-            int id = task.getId();
-            allTasks.put(id, task);
-        }
-        if (task instanceof Subtask && getByKey(((Subtask) task).getEpicId()) instanceof EpicTask) {
+        if (allTasks.containsKey(task.getId())) {
+            updateTask(task);
+        } else if (!allTasks.containsKey(task.getId()) && !(task instanceof Subtask)) {
+            allTasks.put(task.getId(), task);
+        } else if (task instanceof Subtask && getByKey(((Subtask) task).getEpicId()) instanceof EpicTask) {
             ((EpicTask) getByKey(((Subtask) task).getEpicId()))
                     .getSubtasks()
                     .add(task.getId());
-        }
-    }
-
-    public static void updateTask(int oldId, Task task) {
-        if (allTasks.containsKey(oldId) && !allTasks.containsKey(task.getId())) {
-            allTasks.remove(oldId);
-            addTask(task);
+            allTasks.put(task.getId(), task);
         }
     }
 
@@ -114,5 +116,55 @@ public class Manager {
 
         }
         System.out.println(result);
+    }
+
+    public static void updateTask(Task task) {
+        int id = task.getId();
+        if (allTasks.containsKey(id) && allTasks.get(id).getClass() == task.getClass()) {
+            if (task instanceof EpicTask && allTasks.get(task.getId()).getStatus() != task.getStatus()) {
+                return;
+            }
+            allTasks.put(task.getId(), task);
+            checkStatus();
+        }
+    }
+    public static void checkStatus() {
+        Task tempTask;
+        Task tempSubtask;
+        for (Map.Entry<Integer, Task> entry : allTasks.entrySet()) {
+            tempTask = entry.getValue();
+            if (tempTask instanceof EpicTask) {
+                int newCount = 0;
+                int inProgressCount = 0;
+                int doneCount = 0;
+                HashMap<Integer, Task> subTasks = getSubtasks(tempTask.getId());
+                if (subTasks.size() > 0) {
+                    for (Map.Entry<Integer, Task> entrySub : subTasks.entrySet()) {
+                        if (entrySub.getValue().getStatus() == Status.NEW) newCount++;
+                        if (entrySub.getValue().getStatus() == Status.IN_PROGRESS) inProgressCount++;
+                        if (entrySub.getValue().getStatus() == Status.DONE) doneCount++;
+                    }
+                    if (newCount == 0 && inProgressCount == 0 && doneCount > 0) {
+                        if (tempTask.getStatus() != Status.DONE) {
+                            tempTask.setStatus(Status.DONE);
+                            allTasks.put(tempTask.getId(), tempTask);
+                        }
+                    }
+                    if (inProgressCount > 0 || (doneCount > 0 && (inProgressCount != 0 || newCount != 0))) {
+                        if (tempTask.getStatus() != Status.IN_PROGRESS) {
+                            tempTask.setStatus(Status.IN_PROGRESS);
+                            allTasks.put(tempTask.getId(), tempTask);
+                        }
+                    }
+                    if (newCount > 0 && inProgressCount == 0 && doneCount == 0) {
+                        if (tempTask.getStatus() != Status.NEW) {
+                            tempTask.setStatus(Status.NEW);
+                            allTasks.put(tempTask.getId(), tempTask);
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
