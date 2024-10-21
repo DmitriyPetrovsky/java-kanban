@@ -44,7 +44,7 @@ public class Manager {
             updateSubtask(subtask);
         } else if (allEpics.containsKey(subtask.getEpicId()) && !allSubtasks.containsKey(subtask.getId())) {
             allSubtasks.put(subtask.getId(), subtask);
-            allEpics.get(subtask.getEpicId()).getSubtasks().add(subtask.getId());
+            allEpics.get(subtask.getEpicId()).getSubtaskIds().add(subtask.getId());
         }
     }
 
@@ -106,7 +106,7 @@ public class Manager {
     public void removeByIdSubtask(int id) {
         if (allSubtasks.containsKey(id)) {
             Epic tempEpic = allEpics.get(allSubtasks.get(id).getEpicId());
-            tempEpic.getSubtasks().remove((Integer) id);
+            tempEpic.getSubtaskIds().remove((Integer) id);
             allEpics.put(tempEpic.getId(), tempEpic);
             allSubtasks.remove(id);
         }
@@ -116,7 +116,7 @@ public class Manager {
     public void removeByIdEpic(int id) {
         if (allEpics.containsKey(id)) {
             Epic tempEpic = allEpics.get(id);
-            for (int i : tempEpic.getSubtasks()) {
+            for (int i : tempEpic.getSubtaskIds()) {
                 allSubtasks.remove(i);
             }
             allEpics.remove(id);
@@ -127,7 +127,7 @@ public class Manager {
     public Map<Integer, Subtask> getSubtasks(int id) {
         Map<Integer, Subtask> result = new HashMap<>();
         if (allEpics.containsKey(id)) {
-            List<Integer> tempList = allEpics.get(id).getSubtasks();
+            List<Integer> tempList = allEpics.get(id).getSubtaskIds();
             for (Integer ids : tempList) {
                 result.put(ids, allSubtasks.get(ids));
             }
@@ -184,7 +184,7 @@ public class Manager {
                         allEpics.put(tempEpic.getId(), tempEpic);
                     }
                 }
-            } else if (tempEpic.getSubtasks().isEmpty()) {
+            } else if (tempEpic.getSubtaskIds().isEmpty()) {
                 tempEpic.setStatus(Status.NEW);
                 allEpics.put(tempEpic.getId(), tempEpic);
             }

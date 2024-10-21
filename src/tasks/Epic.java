@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
-    private final List<Integer> subtasks = new ArrayList<>();
+    private final List<Integer> subtaskIds = new ArrayList<>();
 
     public Epic(String taskName, String info) {
         super(taskName, info);
     }
 
-    public List<Integer> getSubtasks() {
-        return subtasks;
+    public List<Integer> getSubtaskIds() {
+        return subtaskIds;
     }
 
     public String toString() {
         String result;
         result = "Type = 'Эпик', ID = '" + getId() + "', name = '" + getTaskName() +
-                "', info = '" + getInfo() + "', status = '" + getStatus() + "', subtasks = '" + subtasks.size() + "'.";
+                "', info = '" + getInfo() + "', status = '" + getStatus() + "', subtasks = '" + subtaskIds.size() + "'.";
         return result;
     }
 
