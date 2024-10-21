@@ -1,8 +1,6 @@
 package tasks;
 
 import enums.Status;
-import manager.Manager;
-
 
 public class Task {
     private String taskName;
