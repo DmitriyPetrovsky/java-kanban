@@ -38,10 +38,10 @@ public class Main {
         manager.addEpic(epic);
         manager.printAll();
         System.out.println("\nТест 5.1: Удаляем подзадачу с ID 1010:");
-        manager.removeById(1010);
+        manager.removeByIdSubtask(1010);
         manager.printAll();
         System.out.println("\nТест 5.2: Удаляем эпик с ID 1007 (вместе с подзадачей):");
-        manager.removeById(1007);
+        manager.removeByIdEpic(1007);
         manager.printAll();
         System.out.println("------------------------------------------------");
         System.out.println("\nТест 6: Выводим подзадачи эпика ID 1013:");
@@ -77,8 +77,8 @@ public class Main {
         manager.addEpic(epic);
         manager.printAll();
         System.out.println("\nТест 7.5: Удаляем подзадачи Эпика с ID 1013 и смотрим его статус");
-        manager.removeById(1014);
-        manager.removeById(1016);
+        manager.removeByIdSubtask(1014);
+        manager.removeByIdSubtask(1016);
         manager.printAll();
     }
 

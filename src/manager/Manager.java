@@ -97,21 +97,29 @@ public class Manager {
         return allSubtasks.getOrDefault(id, null);
     }
 
-    public void removeById(int id) {
+    public void removeByIdTask(int id) {
         if (allTasks.containsKey(id)) {
             allTasks.remove(id);
-        } else if (allSubtasks.containsKey(id)) {
+        }
+    }
+
+    public void removeByIdSubtask(int id) {
+        if (allSubtasks.containsKey(id)) {
             Epic tempEpic = allEpics.get(allSubtasks.get(id).getEpicId());
             tempEpic.getSubtasks().remove((Integer) id);
             allEpics.put(tempEpic.getId(), tempEpic);
             allSubtasks.remove(id);
-        } else if (allEpics.containsKey(id)) {
+        }
+        checkStatus();
+    }
+
+    public void removeByIdEpic(int id) {
+        if (allEpics.containsKey(id)) {
             Epic tempEpic = allEpics.get(id);
             for (int i : tempEpic.getSubtasks()) {
                 allSubtasks.remove(i);
             }
             allEpics.remove(id);
-
         }
         checkStatus();
     }

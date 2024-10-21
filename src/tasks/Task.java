@@ -3,7 +3,6 @@ package tasks;
 import enums.Status;
 import manager.Manager;
 
-import java.util.List;
 
 public class Task {
     private String taskName;
@@ -33,10 +32,6 @@ public class Task {
 
     public int getId() {
         return id;
-    }
-
-    public List<Integer> getSubtasks() {
-        return null;
     }
 
     public void setTaskName(String taskName) {
