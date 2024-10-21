@@ -1,3 +1,8 @@
+package tasks;
+
+import enums.Status;
+import manager.Manager;
+
 import java.util.List;
 
 public class Task {
@@ -44,6 +49,13 @@ public class Task {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public String toString() {
+        String result;
+        result = "Type = 'Задача', ID = '" + getId() + "', name = '" + getTaskName() +
+                "', info = '" + getInfo() + "', status = '" + getStatus() + "'.";
+        return result;
     }
 
 }
