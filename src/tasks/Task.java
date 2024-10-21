@@ -7,15 +7,14 @@ import manager.Manager;
 public class Task {
     private String taskName;
     private String info;
-    private final int id;
+    private int id;
     private Status status;
 
     public Task(String taskName, String info) {
         this.taskName = taskName;
         this.info = info;
         this.status = Status.NEW;
-        this.id = 1000 + Manager.getTaskCounter();
-        Manager.increaseTaskCounter();
+        this.id = 0;
     }
 
     public String getTaskName() {
@@ -40,6 +39,10 @@ public class Task {
 
     public void setInfo(String info) {
         this.info = info;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setStatus(Status status) {

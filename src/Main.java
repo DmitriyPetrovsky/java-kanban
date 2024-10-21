@@ -82,7 +82,6 @@ public class Main {
         manager.printAll();
     }
 
-
     public static void fillManagerOne(Manager manager) {
         manager.addTask(new Task("Задача 1", "Инфо зад.1"));
         manager.addEpic(new Epic("Задача эпик 1", "Эпик с подзадачами"));

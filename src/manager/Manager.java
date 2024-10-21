@@ -13,13 +13,9 @@ public class Manager {
     private final Map<Integer, Task> allTasks = new HashMap<>();
     private final Map<Integer, Epic> allEpics = new HashMap<>();
     private final Map<Integer, Subtask> allSubtasks = new HashMap<>();
-    private static int taskCounter = 0;
+    private int taskCounter = 1000;
 
-    public static int getTaskCounter() {
-        return taskCounter;
-    }
-
-    public static void increaseTaskCounter() {
+    public void increaseTaskCounter() {
         taskCounter++;
     }
 
@@ -27,7 +23,9 @@ public class Manager {
         if (allTasks.containsKey(task.getId())) {
             updateTask(task);
         } else if (!allSubtasks.containsKey(task.getId()) && !allEpics.containsKey(task.getId())) {
+            task.setId(taskCounter);
             allTasks.put(task.getId(), task);
+            increaseTaskCounter();
         }
     }
 
@@ -35,7 +33,9 @@ public class Manager {
         if (allEpics.containsKey(epic.getId())) {
             updateEpic(epic);
         } else if (!allTasks.containsKey(epic.getId()) && !allSubtasks.containsKey(epic.getId())) {
+            epic.setId(taskCounter);
             allEpics.put(epic.getId(), epic);
+            increaseTaskCounter();
         }
     }
 
@@ -43,8 +43,10 @@ public class Manager {
         if (allEpics.containsKey(subtask.getEpicId()) && allSubtasks.containsKey(subtask.getId())) {
             updateSubtask(subtask);
         } else if (allEpics.containsKey(subtask.getEpicId()) && !allSubtasks.containsKey(subtask.getId())) {
+            subtask.setId(taskCounter);
             allSubtasks.put(subtask.getId(), subtask);
             allEpics.get(subtask.getEpicId()).getSubtaskIds().add(subtask.getId());
+            increaseTaskCounter();
         }
     }
 
