@@ -53,8 +53,10 @@ public class Manager {
     }
 
     public void updateSubtask(Subtask subtask) {
-        allSubtasks.put(subtask.getId(), subtask);
-        checkStatus();
+        if (allSubtasks.containsKey(subtask.getId())) {
+            allSubtasks.put(subtask.getId(), subtask);
+            checkStatus();
+        }
     }
 
 
