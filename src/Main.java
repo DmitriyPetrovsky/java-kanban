@@ -4,14 +4,13 @@ import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
-import java.util.Map;
+import java.util.List;
 
 public class Main {
 
 
     public static void main(String[] args) {
-        Map<Integer, Epic> allEpics;
-        Map<Integer, Subtask> allSubtasks;
+        List<Subtask> subtasks;
         Subtask subtask;
         Epic epic;
         Manager manager = new Manager();
@@ -19,67 +18,75 @@ public class Main {
         System.out.println("\nЗаполняем задачами...");
         System.out.println("Тест 1: Выводим все задачи:");
         fillManagerOne(manager);
-        manager.printAll();
+        printAll(manager);
         System.out.println("------------------------------------------------");
-        System.out.println("\nТест 2: Удаляем все задачи и снова выводим:");
-        manager.removeAll();
-        manager.printAll();
+        System.out.println("\nТест 2.1: Удаляем все подзадачи и снова выводим:");
+        manager.removeSubtasks();
+        printAll(manager);
+        System.out.println("------------------------------------------------");
+        System.out.println("\nТест 2.2: Удаляем все задачи и эпики снова выводим:\n");
+        manager.removeEpics();
+        manager.removeTasks();
+        printAll(manager);
         System.out.println("------------------------------------------------");
         System.out.println("\nТест 3: Снова заполняем задачи...");
         fillManagerTwo(manager);
-        manager.printAll();
-        System.out.println("\n...и ищем задачу по ID 1011:");
+        printAll(manager);
+        System.out.println("\n...и ищем эпик-задачу по ID 1011:");
         System.out.println(manager.getByKeyEpic(1011));
         System.out.println("------------------------------------------------");
         System.out.println("\nТест 4: Обновляем задачу с ID 1007:\n");
-        epic = manager.getAllEpics().get(1007);
+        epic = manager.getByKeyEpic(1007);
         epic.setTaskName("ИЗМЕНЕННЫЙ ЭПИК C ПОДЗАДАЧАМИ");
         epic.setInfo("ИЗМЕНЕННОЕ ИНФО ЭПИКА");
-        manager.addEpic(epic);
-        manager.printAll();
+        manager.updateEpic(epic);
+        printAll(manager);
         System.out.println("\nТест 5.1: Удаляем подзадачу с ID 1010:");
         manager.removeByIdSubtask(1010);
-        manager.printAll();
+        printAll(manager);
         System.out.println("\nТест 5.2: Удаляем эпик с ID 1007 (вместе с подзадачей):");
         manager.removeByIdEpic(1007);
-        manager.printAll();
+        printAll(manager);
         System.out.println("------------------------------------------------");
         System.out.println("\nТест 6: Выводим подзадачи эпика ID 1013:");
         System.out.println("...Очищаем, наполняем и выводим список задач...");
-        manager.removeAll();
+        manager.removeTasks();
+        manager.removeSubtasks();
+        manager.removeEpics();
         fillManagerThree(manager);
-        manager.printAll();
+        printAll(manager);
         System.out.println("\n...и выводим подзадачи:");
-        System.out.println(manager.getSubtasks(1013));
+        subtasks = manager.getSubtasksByEpicId(1013);
+        for (Subtask tempSubtask : subtasks) {
+            System.out.println(tempSubtask);
+        }
         System.out.println("------------------------------------------------");
         System.out.println("\nТест 7: Играемся со статусами подзадач и смотрим на их Эпик");
         System.out.println("\nТест 7.1: Меняем статус подзадачи ID 1016 на IN_PROGRESS");
-        allSubtasks = manager.getAllSubtasks();
-        subtask = allSubtasks.get(1016);
+        subtask = manager.getByKeySubtask(1016);
         subtask.setStatus(Status.IN_PROGRESS);
-        manager.addSubtask(subtask);
-        manager.printAll();
+        manager.updateSubtask(subtask);
+        printAll(manager);
         System.out.println("\nТест 7.2: Меняем статус подзадач ID 1016 и 1014 на DONE");
         subtask.setStatus(Status.DONE);
-        manager.addSubtask(subtask);
-        subtask = allSubtasks.get(1014);
+        subtask = manager.getByKeySubtask(1014);
         subtask.setStatus(Status.DONE);
-        manager.addSubtask(subtask);
-        manager.printAll();
+        manager.updateSubtask(subtask);
+        printAll(manager);
         System.out.println("\nТест 7.3: Меняем статус подзадачи ID 1014 на NEW");
         subtask.setStatus(Status.NEW);
-        manager.addSubtask(subtask);
-        manager.printAll();
+        manager.updateSubtask(subtask);
+        printAll(manager);
         System.out.println("\nТест 7.4: Пытаемся изменить статус Эпика с ID 1013 на DONE");
-        allEpics = manager.getAllEpics();
-        epic = allEpics.get(1013);
+        epic = manager.getByKeyEpic(1013);
         epic.setStatus(Status.DONE);
-        manager.addEpic(epic);
-        manager.printAll();
+        manager.updateEpic(epic);
+        printAll(manager);
         System.out.println("\nТест 7.5: Удаляем подзадачи Эпика с ID 1013 и смотрим его статус");
         manager.removeByIdSubtask(1014);
         manager.removeByIdSubtask(1016);
-        manager.printAll();
+        printAll(manager);
+
     }
 
     public static void fillManagerOne(Manager manager) {
@@ -108,4 +115,23 @@ public class Main {
         manager.addSubtask(new Subtask("Подзадача 2", "Инфо подзадачи 2", 1013));
         manager.addEpic(new Epic("Задача эпик 2", "Эпик без подзадач"));
     }
+
+    public static void printAll(Manager manager) {
+        List<Epic> allEpics = manager.getAllEpics();
+        List<Subtask> subtasks;
+        List<Task> allTasks = manager.getAllTasks();
+        for (Task task : allTasks) {
+            System.out.println(task);
+        }
+        for (Epic epic : allEpics) {
+            System.out.println(epic);
+            subtasks = manager.getSubtasksByEpicId(epic.getId());
+            for (Subtask subtask : subtasks) {
+                System.out.println(subtask);
+            }
+        }
+    }
 }
+
+
+
