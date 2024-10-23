@@ -60,29 +60,11 @@ public class Manager {
     }
 
 
-    public List<Task> getAllTasks() {
-        List<Task> result = new ArrayList<>();
-        for (Map.Entry<Integer, Task> entryTask : allTasks.entrySet()) {
-            result.add(entryTask.getValue());
-        }
-        return result;
-    }
+    public List<Task> getAllTasks() { return new ArrayList<>(allTasks.values()); }
 
-    public List<Epic> getAllEpics() {
-        List<Epic> result = new ArrayList<>();
-        for (Map.Entry<Integer, Epic> entryEpic : allEpics.entrySet()) {
-            result.add(entryEpic.getValue());
-        }
-        return result;
-    }
+    public List<Epic> getAllEpics() { return new ArrayList<>(allEpics.values()); }
 
-    public List<Subtask> getAllSubtasks() {
-        List<Subtask> result = new ArrayList<>();
-        for (Map.Entry<Integer, Subtask> entrySubtask : allSubtasks.entrySet()) {
-            result.add(entrySubtask.getValue());
-        }
-        return result;
-    }
+    public List<Subtask> getAllSubtasks() { return new ArrayList<>(allSubtasks.values()); }
 
     public void removeTasks() {
         allTasks.clear();
@@ -98,6 +80,7 @@ public class Manager {
         for (Map.Entry<Integer, Epic> entryEpic : allEpics.entrySet()) {
             entryEpic.getValue().getSubtaskIds().clear();
         }
+        checkStatus();
     }
 
     public Task getByKeyTask(int id) {
