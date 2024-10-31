@@ -1,5 +1,6 @@
 import enums.Status;
-import manager.Manager;
+import manager.InMemoryTaskManager;
+import manager.Managers;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
@@ -10,10 +11,13 @@ public class Main {
 
 
     public static void main(String[] args) {
+
+        InMemoryTaskManager manager = Managers.getDefault();
         List<Subtask> subtasks;
+        List<Task> history;
         Subtask subtask;
         Epic epic;
-        Manager manager = new Manager();
+
 
         System.out.println("\nЗаполняем задачами...");
         System.out.println("Тест 1: Выводим все задачи:");
@@ -86,10 +90,16 @@ public class Main {
         manager.removeByIdSubtask(1014);
         manager.removeByIdSubtask(1016);
         printAll(manager);
+        history = manager.getHistory();
+        System.out.println("\nТест 8: Проверяем историю");
+        for (Task task : history) {
+            System.out.println(task);
+        }
+
 
     }
 
-    public static void fillManagerOne(Manager manager) {
+    public static void fillManagerOne(InMemoryTaskManager manager) {
         manager.addTask(new Task("Задача 1", "Инфо зад.1"));
         manager.addEpic(new Epic("Задача эпик 1", "Эпик с подзадачами"));
         manager.addSubtask(new Subtask("Подзадача 1", "Инфо подзадачи 1", 1001));
@@ -98,7 +108,7 @@ public class Main {
         manager.addEpic(new Epic("Задача эпик 2", "Эпик без подзадач"));
     }
 
-    public static void fillManagerTwo(Manager manager) {
+    public static void fillManagerTwo(InMemoryTaskManager manager) {
         manager.addTask(new Task("Задача 1", "Инфо зад.1"));
         manager.addEpic(new Epic("Задача эпик 1", "Эпик с подзадачами"));
         manager.addSubtask(new Subtask("Подзадача 1", "Инфо подзадачи 1", 1007));
@@ -107,7 +117,7 @@ public class Main {
         manager.addEpic(new Epic("Задача эпик 2", "Эпик без подзадач"));
     }
 
-    public static void fillManagerThree(Manager manager) {
+    public static void fillManagerThree(InMemoryTaskManager manager) {
         manager.addTask(new Task("Задача 1", "Инфо зад.1"));
         manager.addEpic(new Epic("Задача эпик 1", "Эпик с подзадачами"));
         manager.addSubtask(new Subtask("Подзадача 1", "Инфо подзадачи 1", 1013));
@@ -116,7 +126,7 @@ public class Main {
         manager.addEpic(new Epic("Задача эпик 2", "Эпик без подзадач"));
     }
 
-    public static void printAll(Manager manager) {
+    public static void printAll(InMemoryTaskManager manager) {
         List<Epic> allEpics = manager.getAllEpics();
         List<Subtask> subtasks;
         List<Task> allTasks = manager.getAllTasks();
