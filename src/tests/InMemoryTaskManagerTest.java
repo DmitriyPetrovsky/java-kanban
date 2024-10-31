@@ -9,7 +9,6 @@ import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,15 +45,19 @@ class InMemoryTaskManagerTest {
         assertEquals(2,manager.getAllEpics().size(), "Количество добавленных Epics не совпадает!");
         Epic epic = manager.getByKeyEpic(1004);
         assertEquals("Задача эпик 1", epic.getTaskName(), "Название Epic с ID=1004 не совпадает!");
-        assertEquals("Эпик с тремя подзадачами", epic.getInfo(), "Описание Epic с ID=1004 не совпадает!");
+        assertEquals("Эпик с тремя подзадачами", epic.getInfo(),
+                "Описание Epic с ID=1004 не совпадает!");
     }
 
     @Test
     void addSubtaskhouldAddSubtaskInMap() {
-        assertEquals(4,manager.getAllSubtasks().size(), "Количество добавленных Subtasks не совпадает!");
+        assertEquals(4,manager.getAllSubtasks().size(),
+                "Количество добавленных Subtasks не совпадает!");
         Subtask subtask = manager.getByKeySubtask(1005);
-        assertEquals("Подзадача 1 эп.1004", subtask.getTaskName(), "Название Subtask c ID=1005 не совпадает!");
-        assertEquals("Инфо подзадачи 1", subtask.getInfo(), "Описание Subtask с ID=1005 не совпадает!");
+        assertEquals("Подзадача 1 эп.1004", subtask.getTaskName(),
+                "Название Subtask c ID=1005 не совпадает!");
+        assertEquals("Инфо подзадачи 1", subtask.getInfo(),
+                "Описание Subtask с ID=1005 не совпадает!");
     }
 
     @Test
@@ -96,8 +99,8 @@ class InMemoryTaskManagerTest {
         subtask.setId(1005);
         manager.updateSubtask(subtask);
         assertNotNull(manager.getByKeySubtask(1005));
-        assertEquals("Измененный заголовок сабтаска с id 1005",  manager.getByKeySubtask(1005).getTaskName(),
-                "Заголовки задач не совпадают!");
+        assertEquals("Измененный заголовок сабтаска с id 1005",
+                manager.getByKeySubtask(1005).getTaskName(), "Заголовки задач не совпадают!");
         assertNotEquals("Подзадача 1 эп.1004", manager.getByKeySubtask(1005).getTaskName(),
                 "Заголовок задачи не изменился!");
         assertEquals("Измененное инфо сабтаска с id 1005", manager.getByKeySubtask(1005).getInfo(),
@@ -217,13 +220,19 @@ class InMemoryTaskManagerTest {
         subtasksList = epic.getSubtaskIds();
         boolean isInList = false;
         for (Integer subtaskID : subtasksList) {
-            if (subtaskID == 1005) isInList = true;
+            if (subtaskID == 1005) {
+                isInList = true;
+                break;
+            }
         }
         assertTrue(isInList, "Запись о Subtask с ID=1005 в Epic с ID=1004 не найдена!");
         manager.removeByIdSubtask(1005);
         isInList = false;
         for (Integer subtaskID : subtasksList) {
-            if (subtaskID == 1005) isInList = true;
+            if (subtaskID == 1005) {
+                isInList = true;
+                break;
+            }
         }
         assertFalse(isInList, "Запись о Subtask с ID=1005 в Epic с ID=1004 не была удалена!");
         assertNull(manager.getByKeySubtask(1005), "Subtask не был удален!");
@@ -236,7 +245,10 @@ class InMemoryTaskManagerTest {
         List<Subtask> allSubtasks = manager.getAllSubtasks();
         boolean isInMap = false;
         for (Subtask subtask : allSubtasks) {
-            if (subtask.getEpicId() == 1004) isInMap = true;
+            if (subtask.getEpicId() == 1004) {
+                isInMap = true;
+                break;
+            }
         }
         assertFalse(isInMap, "Subtask Epic'a c ID=1004 не удален");
         assertNull(manager.getByKeyEpic(1004), "Epic не был удален!");
