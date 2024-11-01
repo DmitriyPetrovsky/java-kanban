@@ -1,6 +1,6 @@
 import enums.Status;
-import manager.InMemoryTaskManager;
 import manager.Managers;
+import manager.TaskManager;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
@@ -12,7 +12,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        InMemoryTaskManager manager = Managers.getDefault();
+        TaskManager manager = Managers.getDefault();
         List<Subtask> subtasks;
         List<Task> history;
         Subtask subtask;
@@ -99,7 +99,7 @@ public class Main {
 
     }
 
-    public static void fillManagerOne(InMemoryTaskManager manager) {
+    public static void fillManagerOne(TaskManager manager) {
         manager.addTask(new Task("Задача 1", "Инфо зад.1"));
         manager.addEpic(new Epic("Задача эпик 1", "Эпик с подзадачами"));
         manager.addSubtask(new Subtask("Подзадача 1", "Инфо подзадачи 1", 1001));
@@ -108,7 +108,7 @@ public class Main {
         manager.addEpic(new Epic("Задача эпик 2", "Эпик без подзадач"));
     }
 
-    public static void fillManagerTwo(InMemoryTaskManager manager) {
+    public static void fillManagerTwo(TaskManager manager) {
         manager.addTask(new Task("Задача 1", "Инфо зад.1"));
         manager.addEpic(new Epic("Задача эпик 1", "Эпик с подзадачами"));
         manager.addSubtask(new Subtask("Подзадача 1", "Инфо подзадачи 1", 1007));
@@ -117,7 +117,7 @@ public class Main {
         manager.addEpic(new Epic("Задача эпик 2", "Эпик без подзадач"));
     }
 
-    public static void fillManagerThree(InMemoryTaskManager manager) {
+    public static void fillManagerThree(TaskManager manager) {
         manager.addTask(new Task("Задача 1", "Инфо зад.1"));
         manager.addEpic(new Epic("Задача эпик 1", "Эпик с подзадачами"));
         manager.addSubtask(new Subtask("Подзадача 1", "Инфо подзадачи 1", 1013));
@@ -126,7 +126,7 @@ public class Main {
         manager.addEpic(new Epic("Задача эпик 2", "Эпик без подзадач"));
     }
 
-    public static void printAll(InMemoryTaskManager manager) {
+    public static void printAll(TaskManager manager) {
         List<Epic> allEpics = manager.getAllEpics();
         List<Subtask> subtasks;
         List<Task> allTasks = manager.getAllTasks();
