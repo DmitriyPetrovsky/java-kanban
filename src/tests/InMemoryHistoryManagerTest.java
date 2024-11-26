@@ -36,7 +36,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void HistoryTest() {
+    void historyTest() {
         assertEquals(4, manager.getHistory().size(), "Количество задач в истории отличается от 4-х");
         manager.getByKeySubtask(1006);
 
@@ -58,7 +58,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void RemoveHeadTaskTest() {
+    void removeHeadTaskTest() {
         manager.removeByIdTask(1002);
         List<Task> history = manager.getHistory();
         assertEquals(3, history.size());
@@ -66,7 +66,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void RemoveFromCenterSubtaskTest() {
+    void removeFromCenterSubtaskTest() {
         manager.removeByIdTask(1009);
         List<Task> history = manager.getHistory();
         assertEquals(3, history.size(), "Количество задач в истории не " +
@@ -74,7 +74,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void RemoveTailSubtaskTest() {
+    void removeTailSubtaskTest() {
         manager.getByKeySubtask(1005);
         manager.removeByIdTask(1005);
         List<Task> history = manager.getHistory();
@@ -84,14 +84,14 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void RemoveTailEpicWithHisSubtaskTest() {
+    void removeTailEpicWithHisSubtaskTest() {
         manager.removeByIdEpic(1008);
         List<Task> history = manager.getHistory();
         assertEquals(2, history.size());
     }
 
     @Test
-    void CheckIfDouble() {
+    void checkIfDouble() {
         manager.getByKeyTask(1002);
         List<Task> history = manager.getHistory();
         assertEquals(4, history.size());
