@@ -13,8 +13,8 @@ class ManagersTest {
     void managersCreatesTest() {
         InMemoryTaskManager taskManager = Managers.getDefault();
         HistoryManager historyManager = Managers.getDefaultHistory();
-        assertTrue(taskManager instanceof InMemoryTaskManager, "Объект InMemoryTaskManager не создан!");
-        assertTrue(historyManager instanceof HistoryManager, "Объект HistoryManager не создан!");
+        assertInstanceOf(InMemoryTaskManager.class, taskManager, "Объект InMemoryTaskManager не создан!");
+        assertInstanceOf(HistoryManager.class, historyManager, "Объект HistoryManager не создан!");
     }
 
 }
