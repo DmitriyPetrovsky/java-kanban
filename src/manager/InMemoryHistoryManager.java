@@ -5,7 +5,6 @@ import tasks.Task;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    List<Task> historyOfViews;
     private final Map<Integer, Node<Task>> mapOfNodes = new HashMap<>();
     private Node<Task> head = null;
     private Node<Task> tail = null;
@@ -32,7 +31,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     public List<Task> getHistory() {
-        historyOfViews = new ArrayList<>();
+        List<Task> historyOfViews = new ArrayList<>();
         Node<Task> node = head;
         while (node != null) {
             historyOfViews.add(node.getValue());

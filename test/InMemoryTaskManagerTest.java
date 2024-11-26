@@ -161,7 +161,7 @@ class InMemoryTaskManagerTest {
     void removeTasksShouldDeleteAllTasks() {
         assertEquals(4, manager.getAllTasks().size(), "Количество добавленных Tasks не совпадает!");
         manager.removeTasks();
-        assertEquals(0, manager.getAllTasks().size(), "Количество Tasks не равно нулю!");
+        assertTrue(manager.getAllTasks().isEmpty(), "Количество Tasks не равно нулю!");
 
     }
 
@@ -169,14 +169,14 @@ class InMemoryTaskManagerTest {
     void removeEpicsShouldDeleteAllEpics() {
         assertEquals(2, manager.getAllEpics().size(), "Количество добавленных Epics не совпадает!");
         manager.removeEpics();
-        assertEquals(0, manager.getAllEpics().size(), "Количество Epics не равно нулю!");
+        assertTrue(manager.getAllEpics().isEmpty(), "Количество Epics не равно нулю!");
     }
 
     @Test
     void removeSubtasksShouldDeleteAllSubtasks() {
         assertEquals(2, manager.getAllEpics().size(), "Количество добавленных Epics не совпадает!");
         manager.removeEpics();
-        assertEquals(0, manager.getAllEpics().size(), "Количество Epics не равно нулю!");
+        assertTrue(manager.getAllEpics().isEmpty(), "Количество Epics не равно нулю!");
     }
 
     @Test
