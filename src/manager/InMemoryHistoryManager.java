@@ -5,9 +5,8 @@ import tasks.Task;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-
-    private List<Task> historyOfViews;
-    private Map<Integer, Node> mapOfNodes = new HashMap<>();
+    List<Task> historyOfViews;
+    private final Map<Integer, Node<Task>> mapOfNodes = new HashMap<>();
     private Node<Task> head = null;
     private Node<Task> tail = null;
 
@@ -16,7 +15,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             if (mapOfNodes.containsKey(task.getId())) {
                 remove(task.getId());
             }
-            Node node = new Node(task);
+            Node<Task> node = new Node<>(task);
             if (head == null) {
                 head = node;
             } else if (tail == null) {
@@ -45,6 +44,12 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void remove(int id) {
         if (mapOfNodes.containsKey(id)) {
             Node<Task> node = mapOfNodes.get(id);
+            if (node.getNext() == null && node.getPrev() == null) {
+                head = null;
+                tail = null;
+                mapOfNodes.remove(id);
+                return;
+            }
             if (node.getPrev() != null) {
                 node.getPrev().setNext(node.getNext());
             } else {

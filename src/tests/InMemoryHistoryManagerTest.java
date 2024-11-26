@@ -35,7 +35,7 @@ class InMemoryHistoryManagerTest {
         manager.getByKeyEpic(1008);
     }
 
-        @Test
+    @Test
     void HistoryTest() {
         assertEquals(4, manager.getHistory().size(), "Количество задач в истории отличается от 4-х");
         manager.getByKeySubtask(1006);
@@ -62,7 +62,7 @@ class InMemoryHistoryManagerTest {
         manager.removeByIdTask(1002);
         List<Task> history = manager.getHistory();
         assertEquals(3, history.size());
-        assertEquals("Подзадача 1 эп. 1008", history.get(0).getTaskName());
+        assertEquals("Подзадача 1 эп. 1008", history.getFirst().getTaskName());
     }
 
     @Test
@@ -95,7 +95,7 @@ class InMemoryHistoryManagerTest {
         manager.getByKeyTask(1002);
         List<Task> history = manager.getHistory();
         assertEquals(4, history.size());
-        assertEquals("Задача 3", history.get(3).getTaskName(), "Последняя задача не является " +
+        assertEquals("Задача 3", history.getLast().getTaskName(), "Последняя задача не является " +
                 "последней просмотренной");
     }
 
