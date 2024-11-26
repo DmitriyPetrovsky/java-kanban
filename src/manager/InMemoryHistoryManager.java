@@ -67,6 +67,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 }
 
+@SuppressWarnings({"checkstyle:ClassTypeParameterName", "checkstyle:OneTopLevelClass"})
 class Node<Task> {
     private Task value;
     private Node<Task> next;
