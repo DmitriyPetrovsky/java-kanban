@@ -259,6 +259,12 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void getHistory() {
+    void EpicShouldNotContainDeletedSubtaskInHisList() {
+        Epic epic = manager.getByKeyEpic(1004);
+        assertEquals(3, epic.getSubtaskIds().size());
+        assertTrue(epic.getSubtaskIds().contains(1005));
+        manager.removeByIdSubtask(1005);
+        assertEquals(2, epic.getSubtaskIds().size());
+        assertFalse(epic.getSubtaskIds().contains(1005));
     }
 }
