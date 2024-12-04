@@ -22,6 +22,12 @@ public class InMemoryTaskManager implements TaskManager {
         taskCounter++;
     }
 
+    public void setTaskCounter(int taskCounter) {
+        if (this.taskCounter < taskCounter) {
+            this.taskCounter = taskCounter;
+        }
+    }
+
     @Override
     public void addTask(Task task) {
         increaseTaskCounter();
