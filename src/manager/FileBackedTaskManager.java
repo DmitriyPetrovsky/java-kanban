@@ -8,7 +8,6 @@ import tasks.Task;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -111,22 +110,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return "";
     }
 
-    public void save() {
-        List<Task> tasks = new ArrayList<>();
+    private void saveToFile() throws ManagerSaveException {
+        List<Task> tasks;
         try {
             if (Files.exists(file.toPath())) {
                 Files.delete(file.toPath());
-            } else {
-                throw new ManagerSaveException("Файл не существует!");
             }
             Files.createFile(file.toPath());
             tasks = super.getAllTasks();
             tasks.addAll(super.getAllEpics());
             tasks.addAll(super.getAllSubtasks());
-        } catch (ManagerSaveException e) {
-            e.getMessage();
         } catch (IOException e) {
-            //throw new ManagerSaveException("Ошибка доступа к файлу: " + file.toPath());
+            throw new ManagerSaveException("Не удается создать файл.");
         }
         try (FileWriter fw = new FileWriter(file, true)) {
             String header = "id/type/name/status/description/epic\n";
@@ -135,7 +130,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 fw.write(toString(t));
             }
         } catch (IOException e) {
-            //throw new ManagerSaveException("Ошибка записи в файл");
+            throw new ManagerSaveException("Не удается записать в файл.");
+        }
+    }
+
+    private void save() {
+        try {
+            saveToFile();
+        } catch (ManagerSaveException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -180,36 +183,46 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             super.setSubtaskMap(allSubtasks);
 
         } catch (IOException e) {
-            //throw new ManagerSaveException("Ошибка чтения из файла");
+            System.out.println(e.getMessage());
         }
     }
+//---------------------Дополнительное задание--------------------------------
 
     public static void main(String[] args) {
-        File file = new File("D:\\JAVA\\sp7.txt");
-        FileBackedTaskManager fbtm = Managers.loadFromFile(file);
-        List<Epic> allEpics = fbtm.getAllEpics();
-        List<Subtask> subtasks;
-        List<Task> allTasks = fbtm.getAllTasks();
-        for (Task task : allTasks) {
-            System.out.println(task);
-        }
-        for (Epic epic : allEpics) {
-            System.out.println(epic);
-            subtasks = fbtm.getSubtasksByEpicId(epic.getId());
-            for (Subtask subtask : subtasks) {
-                System.out.println(subtask);
+        try {
+            File tempFile = Files.createTempFile("temp", ".txt").toFile();
+            TaskManager tm = Managers.loadFromFile(tempFile);
+            tm.addTask(new Task("Задача 1", "Инфо зад.1"));
+            tm.addTask(new Task("Задача 2", "Инфо зад.2"));
+            tm.addEpic(new Epic("Задача эпик 1", "Эпик с подзадачей"));
+            tm.addSubtask(new Subtask("Подзадача 1 эп.1004", "Инфо подзадачи 1", 1002));
+            System.out.println("Выводим добавленные задачи из первого менеджера:");
+            for (Task task : tm.getAllTasks()) {
+                System.out.println(task.toString());
             }
+            for (Epic epic : tm.getAllEpics()) {
+                System.out.println(epic.toString());
+            }
+            for (Subtask subtask : tm.getAllSubtasks()) {
+                System.out.println(subtask.toString());
+            }
+            System.out.println("\n---------------------------------------------------------");
+            System.out.println("Создаем новый менеджер и передаем в него файл с задачами.");
+            TaskManager newManager = Managers.loadFromFile(tempFile);
+            System.out.println("Выводим задачи, загруженные из файла в новый менеджер:");
+            for (Task task : newManager.getAllTasks()) {
+                System.out.println(task.toString());
+            }
+            for (Epic epic : newManager.getAllEpics()) {
+                System.out.println(epic.toString());
+            }
+            for (Subtask subtask : newManager.getAllSubtasks()) {
+                System.out.println(subtask.toString());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-//        System.out.println(fbtm.getAllTasks());
-//        fbtm.addTask(new Task("Задача новая", "Инфо зад.новой"));
-//        System.out.println(fbtm.getAllTasks());
-//
-        fbtm.addTask(new Task("Задача 1", "Инфо зад.1"));
-//        fbtm.addEpic(new Epic("Задача эпик 1", "Эпик с подзадачами"));
-//        fbtm.addSubtask(new Subtask("Подзадача 1", "Инфо подзадачи 1", 1001));
-//        fbtm.addTask(new Task("Задача 2", "Инфо зад.2"));
-//        fbtm.addSubtask(new Subtask("Подзадача 2", "Инфо подзадачи 2", 1001));
-//        fbtm.addEpic(new Epic("Задача эпик 2", "Эпик без подзадач"));
+
     }
 }
