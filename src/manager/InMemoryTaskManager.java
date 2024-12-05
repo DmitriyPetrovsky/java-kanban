@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final Map<Integer, Task> allTasks = new HashMap<>();
-    private final Map<Integer, Epic> allEpics = new HashMap<>();
-    private final Map<Integer, Subtask> allSubtasks = new HashMap<>();
+    private Map<Integer, Task> allTasks = new HashMap<>();
+    private Map<Integer, Epic> allEpics = new HashMap<>();
+    private Map<Integer, Subtask> allSubtasks = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     private int taskCounter = 999;
@@ -212,6 +212,28 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    public Map<Integer, Task> getTaskMap() {
+        return allTasks;
+    }
 
+    public Map<Integer, Subtask> getSubtaskMap() {
+        return allSubtasks;
+    }
+
+    public Map<Integer, Epic> getEpicMap() {
+        return allEpics;
+    }
+
+    public void setTaskMap(Map<Integer, Task> allTasks) {
+        this.allTasks = allTasks;
+    }
+
+    public void setSubtaskMap(Map<Integer, Subtask> allSubtasks) {
+        this.allSubtasks = allSubtasks;
+    }
+
+    public void setEpicMap(Map<Integer, Epic> allEpics) {
+        this.allEpics = allEpics;
+    }
 }
 
