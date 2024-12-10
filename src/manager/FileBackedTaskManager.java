@@ -152,6 +152,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         Map<Integer, Task> allTasks = super.getTaskMap();
         Map<Integer, Epic> allEpics = super.getEpicMap();
         Map<Integer, Subtask> allSubtasks = super.getSubtaskMap();
+        int taskCounter = 999;
         try (BufferedReader bf = new BufferedReader(new FileReader(file))) {
             while (bf.ready()) {
                 String line = bf.readLine();
@@ -161,12 +162,20 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         Task task = new Task(parts[2], parts[3]);
                         task.setStatus(Status.valueOf(parts[4]));
                         task.setId(Integer.parseInt(parts[0]));
+                        if (taskCounter < task.getId()) {
+                            taskCounter = task.getId();
+                            super.setTaskCounter(taskCounter);
+                        }
                         allTasks.put(task.getId(), task);
                     }
                     case "EPIC" -> {
                         Epic epic = new Epic(parts[2], parts[3]);
                         epic.setStatus(Status.valueOf(parts[4]));
                         epic.setId(Integer.parseInt(parts[0]));
+                        if (taskCounter < epic.getId()) {
+                            taskCounter = epic.getId();
+                            super.setTaskCounter(taskCounter);
+                        }
                         allEpics.put(epic.getId(), epic);
                     }
                     case "SUBTASK" -> {
@@ -175,6 +184,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         subtask.setId(Integer.parseInt(parts[0]));
                         allEpics.get(subtask.getEpicId()).getSubtaskIds().add(subtask.getId());
                         allSubtasks.put(subtask.getId(), subtask);
+                        if (taskCounter < subtask.getId()) {
+                            taskCounter = subtask.getId();
+                            super.setTaskCounter(taskCounter);
+                        }
                     }
                 }
             }
