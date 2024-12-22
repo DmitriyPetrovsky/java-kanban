@@ -19,27 +19,28 @@ class InMemoryHistoryManagerTest {
     @BeforeEach
     void presets() {
         manager = Managers.getDefault();
-        manager.addTask(new Task("Задача 1", "Инфо зад.1"));
+    }
+
+    void fillManager() {
+        manager.addTask(new Task("Задача 1", "Инфо зад.1", "18.12.2024 12:00", 90L));
         manager.addTask(new Task("Задача 2", "Инфо зад.2"));
-        manager.addTask(new Task("Задача 3", "Инфо зад.3"));
-        manager.addTask(new Task("Задача 4", "Инфо зад.4"));
-        manager.addEpic(new Epic("Задача эпик 1", "Эпик с тремя подзадачами"));
-        manager.addSubtask(new Subtask("Подзадача 1 эп.1004", "Инфо подзадачи 1", 1004));
-        manager.addSubtask(new Subtask("Подзадача 2 эп.1004", "Инфо подзадачи 2", 1004));
-        manager.addSubtask(new Subtask("Подзадача 3 эп.1004", "Инфо подзадачи 3", 1004));
-        manager.addEpic(new Epic("Задача эпик 2", "Эпик с одной подзадачей"));
-        manager.addSubtask(new Subtask("Подзадача 1 эп. 1008", "Инфо подзадачи 1", 1008));
-        manager.getByKeyTask(1002);
-        manager.getByKeySubtask(1009);
-        manager.getByKeyTask(1001);
-        manager.getByKeyEpic(1008);
+        manager.addEpic(new Epic("Задача эпик 1", "Эпик с двумя подзадачами"));
+        manager.addSubtask(new Subtask("Подзадача 1 эп.1004", "Инфо подзадачи 1", "18.12.2024 18:00", 30L, 1002));
+        manager.addSubtask(new Subtask("Подзадача 2 эп.1004", "Инфо подзадачи 2", "18.12.2024 20:00", 60L, 1002));
+        manager.addSubtask(new Subtask("Подзадача 3 эп.1004", "Инфо подзадачи 3", "18.12.2024 22:00", 15L, 1002));
+        manager.addTask(new Task("Задача 3", "Пересечение по времени", "18.12.2024 18:20", 45L));
+        manager.addTask(new Task("Задача 4", "Инфо зад.4", "16.12.2024 10:00", 45L));
     }
 
     @Test
     void historyTest() {
+        fillManager();
+        manager.getByKeyTask(1000);
+        manager.getByKeyEpic(1002);
+        manager.getByKeySubtask(1003);
+        manager.getByKeyTask(1001);
         assertEquals(4, manager.getHistory().size(), "Количество задач в истории отличается от 4-х");
-        manager.getByKeySubtask(1006);
-
+        manager.getByKeySubtask(1005);
         assertEquals(5, manager.getHistory().size(), "Количество задач в истории отличается от 5-и");
         List<Task> history = manager.getHistory();
         Task task = new Task("Новая задача", "Новое описание");
@@ -52,22 +53,32 @@ class InMemoryHistoryManagerTest {
         assertEquals(1001, manager.getByKeyTask(1001).getId(), "Неверный ID");
         manager.getByKeyTask(1001);
         task = history.get(2);
-        assertEquals("Задача 2", task.getTaskName(), "Неверное имя задачи");
-        assertEquals("Инфо зад.2", task.getInfo(), "Неверное описание задачи");
-        assertEquals(1001, task.getId(), "Неверный ID");
+        assertEquals("Подзадача 1 эп.1004", task.getTaskName(), "Неверное имя задачи");
+        assertEquals("Инфо подзадачи 1", task.getInfo(), "Неверное описание задачи");
+        assertEquals(1003, task.getId(), "Неверный ID");
     }
 
     @Test
     void removeHeadTaskTest() {
-        manager.removeByIdTask(1002);
+        fillManager();
+        manager.getByKeyTask(1000);
+        manager.getByKeyEpic(1002);
+        manager.getByKeyTask(1001);
+        manager.getByKeySubtask(1003);
+        manager.removeByIdTask(1000);
         List<Task> history = manager.getHistory();
         assertEquals(3, history.size());
-        assertEquals("Подзадача 1 эп. 1008", history.getFirst().getTaskName());
+        assertEquals("Задача эпик 1", history.getFirst().getTaskName());
     }
 
     @Test
     void removeFromCenterSubtaskTest() {
-        manager.removeByIdTask(1009);
+        fillManager();
+        manager.getByKeyTask(1000);
+        manager.getByKeyEpic(1002);
+        manager.getByKeySubtask(1003);
+        manager.getByKeyTask(1001);
+        manager.removeByIdTask(1003);
         List<Task> history = manager.getHistory();
         assertEquals(3, history.size(), "Количество задач в истории не " +
                 "совпадает");
@@ -75,27 +86,43 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void removeTailSubtaskTest() {
-        manager.getByKeySubtask(1005);
-        manager.removeByIdTask(1005);
+        fillManager();
+        manager.getByKeyTask(1000);
+        manager.getByKeyEpic(1002);
+        manager.getByKeyTask(1001);
+        manager.getByKeySubtask(1003);
+        manager.removeByIdTask(1003);
         List<Task> history = manager.getHistory();
-        assertEquals(4, history.size());
-        assertEquals("Задача эпик 2", history.get(3).getTaskName(), "Количество задач в истории не " +
-                "совпадает");
+        assertEquals(3, history.size());
+        assertEquals("Задача 2", history.get(2).getTaskName(), "Названия задач не " +
+                "совпадают");
     }
 
     @Test
     void removeTailEpicWithHisSubtaskTest() {
-        manager.removeByIdEpic(1008);
+        fillManager();
+        manager.getByKeyTask(1000);
+        manager.getByKeyTask(1001);
+        manager.getByKeySubtask(1004);
+        manager.getByKeySubtask(1003);
+        manager.getByKeyEpic(1002);
+        manager.removeByIdEpic(1002);
         List<Task> history = manager.getHistory();
         assertEquals(2, history.size());
     }
 
     @Test
     void checkIfDouble() {
-        manager.getByKeyTask(1002);
+        fillManager();
+        manager.getByKeyTask(1000);
+        manager.getByKeyTask(1001);
+        manager.getByKeySubtask(1004);
+        manager.getByKeySubtask(1003);
+        manager.getByKeyEpic(1002);
+        manager.getByKeyTask(1000);
         List<Task> history = manager.getHistory();
-        assertEquals(4, history.size());
-        assertEquals("Задача 3", history.getLast().getTaskName(), "Последняя задача не является " +
+        assertEquals(5, history.size());
+        assertEquals("Задача 1", history.getLast().getTaskName(), "Последняя задача не является " +
                 "последней просмотренной");
     }
 

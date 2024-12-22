@@ -21,8 +21,9 @@ public class Epic extends Task {
     public String toString() {
         String result;
         result = "Type = 'Эпик', ID = '" + getId() + "', name = '" + getTaskName() +
-                "', info = '" + getInfo() + "', status = '" + getStatus() + "', subtasks = '" + subtaskIds.size() + "'.";
+                "', info = '" + getInfo() + "', status = '" + getStatus() + "', subtasks = '" + subtaskIds.size()
+                + "', startTime = '" + getStringStartTime() + "', duration = '" + getStringDuration()
+                + "', endTime = '" + getStringEndTime() + "'.";
         return result;
     }
-
 }
