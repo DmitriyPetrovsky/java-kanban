@@ -1,6 +1,7 @@
 package manager;
 
 import enums.Status;
+import enums.Type;
 import exceptions.DateTimeOverlayException;
 import tasks.Epic;
 import tasks.Subtask;
@@ -329,7 +330,7 @@ public class InMemoryTaskManager implements TaskManager {
     public boolean isTaskValid(Task task) {
         if (task.getStartTime() == null || task.getEndTime() == null) return true;
         return !sortedByDateTasks.stream()
-                .filter(t -> !(t instanceof Epic) && !(task instanceof Subtask))
+                .filter(t -> !(t.getType() == Type.EPIC) && !(task.getType() == Type.SUBTASK))
                 .filter(t -> t.getStartTime() != null && t.getEndTime() != null)
                 .anyMatch(existingTask -> task.overlaps(existingTask) && task.getId() != existingTask.getId());
     }
