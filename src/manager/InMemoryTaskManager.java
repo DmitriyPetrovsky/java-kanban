@@ -1,20 +1,23 @@
 package manager;
 
 import enums.Status;
+import enums.Type;
+import exceptions.DateTimeOverlayException;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.Duration;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class InMemoryTaskManager implements TaskManager {
     private Map<Integer, Task> allTasks = new HashMap<>();
     private Map<Integer, Epic> allEpics = new HashMap<>();
     private Map<Integer, Subtask> allSubtasks = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
+    private Set<Task> sortedByDateTasks = new TreeSet<>(Task::compareByDate);
 
     private int taskCounter = 999;
 
@@ -22,48 +25,110 @@ public class InMemoryTaskManager implements TaskManager {
         taskCounter++;
     }
 
+    public void setTaskCounter(int taskCounter) {
+        this.taskCounter = taskCounter;
+    }
+
+    private void setEpicTime(Subtask subtask) {
+        Epic epic = getByKeyEpic(subtask.getEpicId());
+        Optional<Subtask> minTimeSubtask = getAllSubtasks().stream()
+                .filter(sbt -> sbt.getEpicId() == epic.getId() && sbt.getStartTime() != null)
+                .min(Subtask::minTimeCompare);
+        Optional<Subtask> maxTimeSubtask = getAllSubtasks().stream()
+                .filter(sbt -> sbt.getEpicId() == epic.getId() && sbt.getEndTime() != null)
+                .min(Subtask::maxTimeCompare);
+        if (minTimeSubtask.isPresent() && maxTimeSubtask.isPresent()) {
+            epic.setStartTime(minTimeSubtask.get().getStartTime());
+            epic.setEndTime(maxTimeSubtask.get().getEndTime());
+            epic.setDuration(Duration.between(minTimeSubtask.get().getStartTime(), maxTimeSubtask.get().getEndTime()));
+        } else {
+            epic.setStartTime(null);
+            epic.setEndTime(null);
+            epic.setDuration(null);
+        }
+    }
+
     @Override
     public void addTask(Task task) {
-        increaseTaskCounter();
-        task.setId(taskCounter);
-        allTasks.put(task.getId(), task);
+        try {
+            checkOverlay(task);
+            increaseTaskCounter();
+            task.setId(taskCounter);
+            allTasks.put(task.getId(), task);
+            fillSortedSet();
+        } catch (DateTimeOverlayException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
     public void addEpic(Epic epic) {
-        increaseTaskCounter();
-        epic.setId(taskCounter);
-        allEpics.put(epic.getId(), epic);
+        try {
+            checkOverlay(epic);
+            increaseTaskCounter();
+            epic.setId(taskCounter);
+            allEpics.put(epic.getId(), epic);
+            fillSortedSet();
+        }  catch (DateTimeOverlayException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
     public void addSubtask(Subtask subtask) {
-        increaseTaskCounter();
-        subtask.setId(taskCounter);
-        allSubtasks.put(subtask.getId(), subtask);
-        allEpics.get(subtask.getEpicId()).getSubtaskIds().add(subtask.getId());
+        try {
+            checkOverlay(subtask);
+            increaseTaskCounter();
+            subtask.setId(taskCounter);
+            allSubtasks.put(subtask.getId(), subtask);
+            allEpics.get(subtask.getEpicId()).getSubtaskIds().add(subtask.getId());
+            setEpicTime(subtask);
+            sortedByDateTasks.add(subtask);
+            fillSortedSet();
+        } catch (DateTimeOverlayException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
     public void updateTask(Task task) {
-        if (allTasks.containsKey(task.getId())) {
-            allTasks.put(task.getId(), task);
+        try {
+            checkOverlay(task);
+            if (allTasks.containsKey(task.getId())) {
+                allTasks.put(task.getId(), task);
+                fillSortedSet();
+            }
+        } catch (DateTimeOverlayException e) {
+            System.out.println(e.getMessage());
         }
     }
 
     @Override
     public void updateEpic(Epic epic) {
-        if (allEpics.containsKey(epic.getId())) {
-            allEpics.put(epic.getId(), epic);
-            checkStatus();
+        try {
+            checkOverlay(epic);
+            if (allEpics.containsKey(epic.getId())) {
+                allEpics.put(epic.getId(), epic);
+                checkStatus();
+                fillSortedSet();
+            }
+        } catch (DateTimeOverlayException e) {
+            System.out.println(e.getMessage());
         }
     }
 
     @Override
     public void updateSubtask(Subtask subtask) {
-        if (allSubtasks.containsKey(subtask.getId())) {
-            allSubtasks.put(subtask.getId(), subtask);
-            checkStatus();
+        try {
+            checkOverlay(subtask);
+            if (allSubtasks.containsKey(subtask.getId())) {
+                allSubtasks.put(subtask.getId(), subtask);
+                setEpicTime(subtask);
+                checkStatus();
+                fillSortedSet();
+            }
+        } catch (DateTimeOverlayException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -85,12 +150,14 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeTasks() {
         allTasks.clear();
+        fillSortedSet();
     }
 
     @Override
     public void removeEpics() {
         allEpics.clear();
         allSubtasks.clear();
+        fillSortedSet();
     }
 
     @Override
@@ -99,7 +166,15 @@ public class InMemoryTaskManager implements TaskManager {
         for (Map.Entry<Integer, Epic> entryEpic : allEpics.entrySet()) {
             entryEpic.getValue().getSubtaskIds().clear();
         }
+        getAllEpics().stream()
+                        .peek(epic -> {
+                            epic.setStartTime(null);
+                            epic.setDuration(null);
+                            epic.setEndTime(null);
+                        })
+                        .collect(Collectors.toList());
         checkStatus();
+        fillSortedSet();
     }
 
     @Override
@@ -130,6 +205,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeByIdTask(int id) {
         allTasks.remove(id);
         historyManager.remove(id);
+        fillSortedSet();
     }
 
     @Override
@@ -142,6 +218,7 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.remove(id);
         }
         checkStatus();
+        fillSortedSet();
     }
 
     @Override
@@ -154,6 +231,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
             allEpics.remove(id);
             historyManager.remove(id);
+            fillSortedSet();
         }
     }
 
@@ -234,6 +312,34 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void setEpicMap(Map<Integer, Epic> allEpics) {
         this.allEpics = allEpics;
+    }
+
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(sortedByDateTasks);
+    }
+
+    public void fillSortedSet() {
+        sortedByDateTasks.clear();
+        List<Task> allTasksSet = Stream.of(getAllTasks(), getAllEpics(), getAllSubtasks())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        sortedByDateTasks.addAll(allTasksSet);
+    }
+
+    public boolean isTaskValid(Task task) {
+        if (task.getStartTime() == null || task.getEndTime() == null) return true;
+        return !sortedByDateTasks.stream()
+                .filter(t -> !(t.getType() == Type.EPIC) && !(task.getType() == Type.SUBTASK))
+                .filter(t -> t.getStartTime() != null && t.getEndTime() != null)
+                .anyMatch(existingTask -> task.overlaps(existingTask) && task.getId() != existingTask.getId());
+    }
+
+    public void checkOverlay(Task task) {
+        if (!isTaskValid(task)) {
+            throw new DateTimeOverlayException("Задача '" + task.getTaskName()
+                    + "' пересекается по времени с существующей и не будет добавлена.");
+        }
     }
 }
 

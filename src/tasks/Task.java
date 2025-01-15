@@ -1,6 +1,11 @@
 package tasks;
 
 import enums.Status;
+import enums.Type;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Task {
     private String taskName;
@@ -8,27 +13,58 @@ public class Task {
     private int id;
     private Status status;
 
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private Duration duration;
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    private static final String NULL_TIME = "[null]";
+    private Type type;
+
     public Task(String taskName, String info) {
         this.taskName = taskName;
         this.info = info;
         this.status = Status.NEW;
         this.id = 0;
+        this.type = Type.TASK;
+    }
+
+    public Type getType() {
+        return this.type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public Task(String taskName, String info, String startTimeString, long durationLong) {
+        this.taskName = taskName;
+        this.info = info;
+        this.status = Status.NEW;
+        this.id = 0;
+        this.startTime = LocalDateTime.parse(startTimeString, dtf);
+        this.duration = Duration.ofMinutes(durationLong);
+        this.endTime = startTime.plus(duration);
+        this.type = Type.TASK;
     }
 
     public String getTaskName() {
-        return taskName;
+        return this.taskName;
     }
 
     public String getInfo() {
-        return info;
+        return this.info;
     }
 
     public Status getStatus() {
-        return status;
+        return this.status;
     }
 
     public int getId() {
-        return id;
+        return this.id;
+    }
+
+    public String getNullTimeConst() {
+        return NULL_TIME;
     }
 
     public void setTaskName(String taskName) {
@@ -50,15 +86,86 @@ public class Task {
     public String toString() {
         String result;
         result = "Type = 'Задача', ID = '" + getId() + "', name = '" + getTaskName() +
-                "', info = '" + getInfo() + "', status = '" + getStatus() + "'.";
+                "', info = '" + getInfo() + "', status = '" + getStatus() + "', startTime ='"
+                + getStringStartTime() + "', duration = '" + getStringDuration()
+                + "', endTime = '" + getStringEndTime() + "'.";
         return result;
+    }
+
+    public static int compareByDate(Task t1, Task t2) {
+        if (t1.getStartTime() != null && t2.getStartTime() != null) {
+            if (t1.getStartTime().isBefore(t2.getStartTime())) {
+                return -1;
+            } else if (t1.getStartTime().isAfter(t2.getStartTime())) {
+                return 1;
+            } else {
+                return 1;
+            }
+        } else if (t1.getStartTime() == null && t2.getStartTime() != null) {
+            return 1;
+        } else if (t1.getStartTime() != null && t2.getStartTime() == null) {
+            return -1;
+        }
+            return 1;
+    }
+
+    public LocalDateTime getStartTime() {
+        return this.startTime;
+    }
+
+    public DateTimeFormatter getDtf() {
+        return this.dtf;
+    }
+
+    public LocalDateTime getEndTime() {
+        return this.endTime;
+    }
+
+    public Duration getDuration() {
+        return this.duration;
+    }
+
+    public String getStringStartTime() {
+        if (getStartTime() != null) {
+            return getStartTime().format(getDtf());
+        }
+        return NULL_TIME;
+    }
+
+    public String getStringDuration() {
+        if (getDuration() != null) {
+            return String.valueOf(getDuration().toMinutes());
+        }
+        return NULL_TIME;
+    }
+
+    public String getStringEndTime() {
+        if (getEndTime() != null) {
+            return getEndTime().format(getDtf());
+        }
+        return NULL_TIME;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
     }
 
     @Override
     public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Task task)) return false;
-
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Task task)) {
+            return false;
+        }
         return id == task.id && taskName.equals(task.taskName) && info.equals(task.info) && status == task.status;
     }
 
@@ -69,5 +176,9 @@ public class Task {
         result = 31 * result + id;
         result = 31 * result + status.hashCode();
         return result;
+    }
+
+    public boolean overlaps(Task otherTask) {
+        return !(this.endTime.isBefore(otherTask.getStartTime()) || otherTask.getEndTime().isBefore(this.startTime));
     }
 }

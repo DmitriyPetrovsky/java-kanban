@@ -1,5 +1,6 @@
 import manager.FileBackedTaskManager;
 import manager.Managers;
+import manager.TaskManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,14 +18,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FileBackedTaskManagerTest {
-    private FileBackedTaskManager manager;
+class FileBackedTaskManagerTest extends TaskManagerTest {
     private File file;
 
     @BeforeEach
     void setUp() throws IOException {
         file = File.createTempFile("temp", ".txt");
-        manager = Managers.loadFromFile(file);
+        manager = new FileBackedTaskManager(file);
     }
 
     @AfterEach
@@ -35,7 +35,7 @@ class FileBackedTaskManagerTest {
     @Test
     void addTask() {
         fillManager();
-        assertEquals(2, manager.getAllTasks().size(), "Количество добавленных Tasks не совпадает!");
+        assertEquals(3, manager.getAllTasks().size(), "Количество добавленных Tasks не совпадает!");
         Task task = manager.getByKeyTask(1000);
         assertEquals("Задача 1", task.getTaskName(), "Название задачи с ID=1000 не совпадает!");
         assertEquals("Инфо зад.1", task.getInfo(), "Описание задачи с ID=1000 не совпадает!");
@@ -44,23 +44,20 @@ class FileBackedTaskManagerTest {
     @Test
     void saveTest() {
         fillManager();
-        assertEquals(readFile().size(), 5, "Количество строк в файле не совпадает с количеством задач");
-        assertEquals(readFile().get(2), "1001/TASK/Задача 2/Инфо зад.2/NEW/");
+        assertEquals(readFile().size(), 8, "Количество строк в файле не совпадает с количеством задач");
+        assertEquals(readFile().get(1), "1000/TASK/Задача 1/Инфо зад.1/NEW/18.12.2024 12:00/90/");
     }
 
     @Test
     void loadTest() {
         fillManager();
-        manager.setTaskMap(new HashMap<>());
-        manager.setEpicMap(new HashMap<>());
-        manager.setSubtaskMap(new HashMap<>());
-        assertEquals(manager.getAllEpics().size(), 0);
-        assertEquals(manager.getAllSubtasks().size(), 0);
-        assertEquals(manager.getAllTasks().size(), 0);
-        manager.load(file);
         assertEquals(manager.getAllEpics().size(), 1);
-        assertEquals(manager.getAllSubtasks().size(), 1);
-        assertEquals(manager.getAllTasks().size(), 2);
+        assertEquals(manager.getAllSubtasks().size(), 3);
+        assertEquals(manager.getAllTasks().size(), 3);
+        TaskManager newManager = Managers.loadFromFile(file);
+        assertEquals(newManager.getAllEpics().size(), 1);
+        assertEquals(newManager.getAllSubtasks().size(), 3);
+        assertEquals(newManager.getAllTasks().size(), 3);
     }
 
     List<String> readFile() {
@@ -77,12 +74,28 @@ class FileBackedTaskManagerTest {
         return null;
     }
 
-    void fillManager() {
-        manager.addTask(new Task("Задача 1", "Инфо зад.1"));
-        manager.addTask(new Task("Задача 2", "Инфо зад.2"));
-        manager.addEpic(new Epic("Задача эпик 1", "Эпик с подзадачей"));
-        manager.addSubtask(new Subtask("Подзадача 1 эп.1004", "Инфо подзадачи 1", 1002));
+    @Test
+    public void allSubtasksNewTest() {
+        super.allSubtasksNewTest();
     }
 
+    @Test
+    public void oneSubtaskInProgressTest() {
+        super.oneSubtaskInProgressTest();
+    }
 
+    @Test
+    public void allSubtasksDoneTest() {
+        super.allSubtasksDoneTest();
+    }
+
+    @Test
+    public void subtasksNewAndDoneTest() {
+        super.subtasksNewAndDoneTest();
+    }
+
+    @Test
+    public void crossTimeTest() {
+        super.crossTimeTest();
+    }
 }
