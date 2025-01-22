@@ -1,4 +1,5 @@
 import enums.Status;
+import exceptions.DateTimeOverlayException;
 import manager.TaskManager;
 import tasks.Epic;
 import tasks.Subtask;
@@ -60,7 +61,11 @@ abstract class TaskManagerTest<T extends Task> {
     public void crossTimeTest() {
         fillManager();
         assertEquals(7, manager.getPrioritizedTasks().size());
-        manager.addTask(new Task("Задача кросс-тайм", "Инфо", "16.12.2024 10:10", 90L));
+        try {
+            manager.addTask(new Task("Задача кросс-тайм", "Инфо", "16.12.2024 10:10", 90L));
+        } catch (DateTimeOverlayException e) {
+            System.out.println(e.getMessage());
+        }
         assertEquals(7, manager.getPrioritizedTasks().size());
     }
 

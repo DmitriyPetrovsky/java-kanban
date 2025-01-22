@@ -2,10 +2,10 @@ package tasks;
 
 import enums.Status;
 import enums.Type;
+import manager.Managers;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class Task {
     private String taskName;
@@ -16,7 +16,6 @@ public class Task {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Duration duration;
-    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     private static final String NULL_TIME = "[null]";
     private Type type;
 
@@ -41,7 +40,7 @@ public class Task {
         this.info = info;
         this.status = Status.NEW;
         this.id = 0;
-        this.startTime = LocalDateTime.parse(startTimeString, dtf);
+        this.startTime = LocalDateTime.parse(startTimeString, Managers.getDtf());
         this.duration = Duration.ofMinutes(durationLong);
         this.endTime = startTime.plus(duration);
         this.type = Type.TASK;
@@ -113,10 +112,6 @@ public class Task {
         return this.startTime;
     }
 
-    public DateTimeFormatter getDtf() {
-        return this.dtf;
-    }
-
     public LocalDateTime getEndTime() {
         return this.endTime;
     }
@@ -127,7 +122,7 @@ public class Task {
 
     public String getStringStartTime() {
         if (getStartTime() != null) {
-            return getStartTime().format(getDtf());
+            return getStartTime().format(Managers.getDtf());
         }
         return NULL_TIME;
     }
@@ -141,7 +136,7 @@ public class Task {
 
     public String getStringEndTime() {
         if (getEndTime() != null) {
-            return getEndTime().format(getDtf());
+            return getEndTime().format(Managers.getDtf());
         }
         return NULL_TIME;
     }
