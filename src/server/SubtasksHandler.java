@@ -3,6 +3,7 @@ package server;
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import enums.Method;
 import enums.Type;
 import exceptions.DateTimeOverlayException;
 import manager.TaskManager;
@@ -27,7 +28,7 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
         String method = httpExchange.getRequestMethod();
         String[] splitString = super.getUriArray(httpExchange);
         switch (method) {
-            case "GET":
+            case Method.GET:
                 if (splitString[splitString.length - 1].equals("subtasks") && splitString.length == 2) {
                     jsonString = gson.toJson(taskManager.getAllSubtasks());
                     super.sendText(httpExchange, jsonString, 200);
@@ -40,7 +41,7 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
                     super.sendNotFound(httpExchange, jsonString);
                 }
                 break;
-            case "POST":
+            case Method.POST:
                 InputStream inputStream = httpExchange.getRequestBody();
                 String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
                 JsonElement jsonElement = JsonParser.parseString(body);
@@ -73,7 +74,7 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
                     super.sendNotFound(httpExchange, jsonString);
                 }
                 break;
-            case "DELETE":
+            case Method.DELETE:
                 if (splitString[splitString.length - 2].equals("subtasks") &&
                         taskManager.getByKeySubtask(Integer.parseInt(splitString[splitString.length - 1])) != null) {
                     taskManager.removeByIdSubtask(Integer.parseInt(splitString[splitString.length - 1]));

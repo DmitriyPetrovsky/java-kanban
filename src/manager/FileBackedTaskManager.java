@@ -213,7 +213,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void loadTime(Task task, String startTime, String duration) {
         if (!startTime.equals(task.getNullTimeConst()) && !duration.equals(task.getNullTimeConst())) {
-            task.setStartTime(LocalDateTime.parse(startTime, Managers.getDtf()));
+            task.setStartTime(LocalDateTime.parse(startTime, Managers.getDateTimeFormatter()));
             task.setDuration(Duration.ofMinutes(Long.parseLong(duration)));
             task.setEndTime(task.getStartTime().plus(task.getDuration()));
         }

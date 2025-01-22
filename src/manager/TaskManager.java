@@ -5,7 +5,6 @@ import tasks.Subtask;
 import tasks.Task;
 
 import java.util.List;
-import java.util.Map;
 
 public interface TaskManager {
 
@@ -26,12 +25,6 @@ public interface TaskManager {
     List<Epic> getAllEpics();
 
     List<Subtask> getAllSubtasks();
-
-    Map<Integer, Task> getTaskMap();
-
-    Map<Integer, Subtask> getSubtaskMap();
-
-    Map<Integer, Epic> getEpicMap();
 
     void removeTasks();
 

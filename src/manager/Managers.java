@@ -19,7 +19,7 @@ public class Managers {
         return fbtm;
     }
 
-    public static DateTimeFormatter getDtf() {
+    public static DateTimeFormatter getDateTimeFormatter() {
         return DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     }
 }

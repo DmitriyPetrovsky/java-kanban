@@ -40,7 +40,7 @@ public class Task {
         this.info = info;
         this.status = Status.NEW;
         this.id = 0;
-        this.startTime = LocalDateTime.parse(startTimeString, Managers.getDtf());
+        this.startTime = LocalDateTime.parse(startTimeString, Managers.getDateTimeFormatter());
         this.duration = Duration.ofMinutes(durationLong);
         this.endTime = startTime.plus(duration);
         this.type = Type.TASK;
@@ -122,7 +122,7 @@ public class Task {
 
     public String getStringStartTime() {
         if (getStartTime() != null) {
-            return getStartTime().format(Managers.getDtf());
+            return getStartTime().format(Managers.getDateTimeFormatter());
         }
         return NULL_TIME;
     }
@@ -136,7 +136,7 @@ public class Task {
 
     public String getStringEndTime() {
         if (getEndTime() != null) {
-            return getEndTime().format(Managers.getDtf());
+            return getEndTime().format(Managers.getDateTimeFormatter());
         }
         return NULL_TIME;
     }

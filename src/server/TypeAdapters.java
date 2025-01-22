@@ -16,7 +16,7 @@ public class TypeAdapters {
         @Override
         public void write(final JsonWriter jsonWriter, final LocalDateTime localDateTime) throws IOException {
             if (localDateTime != null) {
-                jsonWriter.value(localDateTime.format(Managers.getDtf()));
+                jsonWriter.value(localDateTime.format(Managers.getDateTimeFormatter()));
             } else {
                 jsonWriter.value("null");
             }
@@ -32,7 +32,7 @@ public class TypeAdapters {
                 if ("null".equals(dateStr)) {
                     return null;
                 }
-                return LocalDateTime.parse(dateStr, Managers.getDtf());
+                return LocalDateTime.parse(dateStr, Managers.getDateTimeFormatter());
             }
         }
     }

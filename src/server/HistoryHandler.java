@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import enums.Method;
 import manager.TaskManager;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
         String jsonString;
         String method = httpExchange.getRequestMethod();
         String[] splitString = super.getUriArray(httpExchange);
-        if (method.equals("GET") && splitString[splitString.length - 1].equals("history") && splitString.length == 2) {
+        if (method.equals(Method.GET) && splitString[splitString.length - 1].equals("history") && splitString.length == 2) {
             jsonString = gson.toJson(taskManager.getHistory());
             super.sendText(httpExchange, jsonString, 200);
         }

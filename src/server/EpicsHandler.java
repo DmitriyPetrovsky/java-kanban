@@ -3,6 +3,7 @@ package server;
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import enums.Method;
 import enums.Status;
 import enums.Type;
 import exceptions.DateTimeOverlayException;
@@ -30,7 +31,7 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
         String method = httpExchange.getRequestMethod();
         String[] splitString = super.getUriArray(httpExchange);
         switch (method) {
-            case "GET":
+            case Method.GET:
                 if (splitString[splitString.length - 1].equals("epics") && splitString.length == 2) {
                     jsonString = gson.toJson(taskManager.getAllEpics());
                     super.sendText(httpExchange, jsonString, 200);
@@ -48,7 +49,7 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
                     super.sendNotFound(httpExchange, jsonString);
                 }
                 break;
-            case "POST":
+            case Method.POST:
                 InputStream inputStream = httpExchange.getRequestBody();
                 String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
                 JsonElement jsonElement = JsonParser.parseString(body);
@@ -68,7 +69,7 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
                 }
                 super.sendText(httpExchange, "Эпик успешно добавлен", 201);
                 break;
-            case "DELETE":
+            case Method.DELETE:
                 if (splitString[splitString.length - 2].equals("epics") &&
                         taskManager.getByKeyEpic(Integer.parseInt(splitString[splitString.length - 1])) != null) {
                     taskManager.removeByIdEpic(Integer.parseInt(splitString[splitString.length - 1]));
