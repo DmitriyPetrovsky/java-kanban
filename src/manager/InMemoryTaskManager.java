@@ -49,7 +49,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addTask(Task task) {
+    public void addTask(Task task) throws DateTimeOverlayException {
         try {
             checkOverlay(task);
             increaseTaskCounter();
@@ -58,11 +58,12 @@ public class InMemoryTaskManager implements TaskManager {
             fillSortedSet();
         } catch (DateTimeOverlayException e) {
             System.out.println(e.getMessage());
+            throw new DateTimeOverlayException(e.getMessage());
         }
     }
 
     @Override
-    public void addEpic(Epic epic) {
+    public void addEpic(Epic epic) throws DateTimeOverlayException {
         try {
             checkOverlay(epic);
             increaseTaskCounter();
@@ -75,7 +76,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addSubtask(Subtask subtask) {
+    public void addSubtask(Subtask subtask) throws DateTimeOverlayException {
         try {
             checkOverlay(subtask);
             increaseTaskCounter();
@@ -87,11 +88,12 @@ public class InMemoryTaskManager implements TaskManager {
             fillSortedSet();
         } catch (DateTimeOverlayException e) {
             System.out.println(e.getMessage());
+            throw new DateTimeOverlayException(e.getMessage());
         }
     }
 
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws DateTimeOverlayException {
         try {
             checkOverlay(task);
             if (allTasks.containsKey(task.getId())) {
@@ -100,11 +102,12 @@ public class InMemoryTaskManager implements TaskManager {
             }
         } catch (DateTimeOverlayException e) {
             System.out.println(e.getMessage());
+            throw new DateTimeOverlayException(e.getMessage());
         }
     }
 
     @Override
-    public void updateEpic(Epic epic) {
+    public void updateEpic(Epic epic) throws DateTimeOverlayException {
         try {
             checkOverlay(epic);
             if (allEpics.containsKey(epic.getId())) {
@@ -114,11 +117,12 @@ public class InMemoryTaskManager implements TaskManager {
             }
         } catch (DateTimeOverlayException e) {
             System.out.println(e.getMessage());
+            throw new DateTimeOverlayException(e.getMessage());
         }
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public void updateSubtask(Subtask subtask) throws DateTimeOverlayException {
         try {
             checkOverlay(subtask);
             if (allSubtasks.containsKey(subtask.getId())) {
@@ -129,6 +133,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
         } catch (DateTimeOverlayException e) {
             System.out.println(e.getMessage());
+            throw new DateTimeOverlayException(e.getMessage());
         }
     }
 
@@ -328,9 +333,15 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public boolean isTaskValid(Task task) {
+        Subtask subtask;
+        if (task.getType() == Type.SUBTASK) {
+            subtask = (Subtask) task;
+        } else {
+            subtask = null;
+        }
         if (task.getStartTime() == null || task.getEndTime() == null) return true;
         return !sortedByDateTasks.stream()
-                .filter(t -> !(t.getType() == Type.EPIC) && !(task.getType() == Type.SUBTASK))
+                .filter(t -> (!(t.getType() == Type.EPIC) && !(task.getType() == Type.SUBTASK)) || (subtask != null && subtask.getEpicId() != t.getId()))
                 .filter(t -> t.getStartTime() != null && t.getEndTime() != null)
                 .anyMatch(existingTask -> task.overlaps(existingTask) && task.getId() != existingTask.getId());
     }

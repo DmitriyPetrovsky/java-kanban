@@ -1,6 +1,7 @@
 package manager;
 
 import java.io.File;
+import java.time.format.DateTimeFormatter;
 
 public class Managers {
 
@@ -16,5 +17,9 @@ public class Managers {
         FileBackedTaskManager fbtm = new FileBackedTaskManager(file);
         fbtm.load(file);
         return fbtm;
+    }
+
+    public static DateTimeFormatter getDateTimeFormatter() {
+        return DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     }
 }

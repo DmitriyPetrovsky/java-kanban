@@ -1,6 +1,7 @@
 package tasks;
 
 import enums.Type;
+import manager.Managers;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class Subtask extends Task {
     public Subtask(String taskName, String info, String startTimeString, long durationLong, int epicId) {
         super(taskName, info, startTimeString, durationLong);
         this.epicId = epicId;
-        super.setStartTime(LocalDateTime.parse(startTimeString, super.getDtf()));
+        super.setStartTime(LocalDateTime.parse(startTimeString, Managers.getDateTimeFormatter()));
         super.setDuration(Duration.ofMinutes(durationLong));
         super.setEndTime(super.getStartTime().plus(super.getDuration()));
         this.setType(Type.SUBTASK);

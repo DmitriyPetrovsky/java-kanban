@@ -1,5 +1,6 @@
 
 
+import exceptions.DateTimeOverlayException;
 import manager.Managers;
 import manager.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,14 +23,18 @@ class InMemoryHistoryManagerTest {
     }
 
     void fillManager() {
-        manager.addTask(new Task("Задача 1", "Инфо зад.1", "18.12.2024 12:00", 90L));
-        manager.addTask(new Task("Задача 2", "Инфо зад.2"));
-        manager.addEpic(new Epic("Задача эпик 1", "Эпик с двумя подзадачами"));
-        manager.addSubtask(new Subtask("Подзадача 1 эп.1004", "Инфо подзадачи 1", "18.12.2024 18:00", 30L, 1002));
-        manager.addSubtask(new Subtask("Подзадача 2 эп.1004", "Инфо подзадачи 2", "18.12.2024 20:00", 60L, 1002));
-        manager.addSubtask(new Subtask("Подзадача 3 эп.1004", "Инфо подзадачи 3", "18.12.2024 22:00", 15L, 1002));
-        manager.addTask(new Task("Задача 3", "Пересечение по времени", "18.12.2024 18:20", 45L));
-        manager.addTask(new Task("Задача 4", "Инфо зад.4", "16.12.2024 10:00", 45L));
+        try {
+            manager.addTask(new Task("Задача 1", "Инфо зад.1", "18.12.2024 12:00", 90L));
+            manager.addTask(new Task("Задача 2", "Инфо зад.2"));
+            manager.addEpic(new Epic("Задача эпик 1", "Эпик с двумя подзадачами"));
+            manager.addSubtask(new Subtask("Подзадача 1 эп.1004", "Инфо подзадачи 1", "18.12.2024 18:00", 30L, 1002));
+            manager.addSubtask(new Subtask("Подзадача 2 эп.1004", "Инфо подзадачи 2", "18.12.2024 20:00", 60L, 1002));
+            manager.addSubtask(new Subtask("Подзадача 3 эп.1004", "Инфо подзадачи 3", "18.12.2024 22:00", 15L, 1002));
+            manager.addTask(new Task("Задача 3", "Пересечение по времени", "18.12.2024 18:20", 45L));
+            manager.addTask(new Task("Задача 4", "Инфо зад.4", "16.12.2024 10:00", 45L));
+        } catch (DateTimeOverlayException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Test
